@@ -2,7 +2,7 @@ package Apache::DefaultCharset;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = 0.01;
+$VERSION = 0.02;
 
 require DynaLoader;
 use base qw(DynaLoader);
@@ -24,6 +24,17 @@ sub name {
     }
 }
 
+package Apache;
+
+sub add_default_charset_name {
+    my $r = shift;
+    if (@_ == 1) {
+	Apache::DefaultCharset::_set($r, @_);
+    } else {
+	return Apache::DefaultCharset::_get($r);
+    }
+}
+
 1;
 __END__
 
@@ -35,11 +46,16 @@ Apache::DefaultCharset - AddDefaultCharset configuration from mod_perl
 
   use Apache::DefaultCharset;
 
-  my $charset = Apache::DefaultCharset->new($r);
+  # This module adds "add_default_charset_name" method
+  $charset = $r->add_default_charset_name;
+  $r->add_default_charset_name('euc-jp');
+
+  # via Apache::DefaultCharset object
+  $charset = Apache::DefaultCharset->new($r);
   print "default_charset_name is ", $charset->name;
   # or print "default charset is $charset"; will do (overload)
+  $charset->name('euc-jp');
 
-  $charset->name('euc-jp');	# modify default_charset_name in run-time
 
 =head1 DESCRIPTION
 
